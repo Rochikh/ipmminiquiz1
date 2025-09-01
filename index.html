@@ -747,12 +747,12 @@
                 score += correctMatches / 4; // Partial credit
             }
             
-            // Questions 4 and 5 are manually graded
-            const hasAnswer4 = answers[4] && answers[4].trim().length > 20;
-            const hasAnswer5 = answers[5] && answers[5].trim().length > 20;
+            // Questions 4 and 5 are manually graded (1 point each if answered)
+            const hasAnswer4 = answers[4] && answers[4].trim().length > 15;
+            const hasAnswer5 = answers[5] && answers[5].trim().length > 15;
             
-            if (hasAnswer4) score += 0.5;
-            if (hasAnswer5) score += 0.5;
+            if (hasAnswer4) score += 1;
+            if (hasAnswer5) score += 1;
             
             const finalScore = Math.round(score * 10) / 10;
             
