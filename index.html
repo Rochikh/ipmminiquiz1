@@ -145,48 +145,50 @@
             border-color: #3498db;
         }
 
-        .matching-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 20px;
+        .dropdown-matching {
+            space-y: 15px;
         }
 
-        .matching-column h4 {
-            color: #2c3e50;
-            margin-bottom: 15px;
-            font-size: 1.1rem;
-        }
-
-        .matching-item {
+        .matching-pair {
             background: #f8f9fa;
             border: 2px solid #e9ecef;
             border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 8px;
-            cursor: pointer;
+            padding: 20px;
+            margin-bottom: 15px;
             transition: all 0.3s ease;
-            position: relative;
         }
 
-        .matching-item:hover {
-            border-color: #3498db;
-            background: #e8f4fd;
-        }
-
-        .matching-item.selected {
-            border-color: #3498db;
-            background: #e8f4fd;
-        }
-
-        .matching-item.correct-match {
+        .matching-pair.correct {
             border-color: #27ae60;
             background: #d5f4e6;
         }
 
-        .matching-item.incorrect-match {
+        .matching-pair.incorrect {
             border-color: #e74c3c;
             background: #fbeaea;
+        }
+
+        .example-text {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .type-select {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e9ecef;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            background: white;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+        }
+
+        .type-select:focus {
+            outline: none;
+            border-color: #3498db;
         }
 
         .feedback {
@@ -360,10 +362,6 @@
                 padding: 20px;
             }
             
-            .matching-container {
-                grid-template-columns: 1fr;
-            }
-            
             .controls {
                 flex-direction: column;
             }
@@ -446,22 +444,48 @@
                 <div class="question-title">Typologie d'innovation</div>
             </div>
             <div class="question-text">
-                Associez chaque exemple à son type d'innovation en cliquant d'abord sur un exemple puis sur le type correspondant.
+                Associez chaque exemple à son type d'innovation en sélectionnant le type approprié dans le menu déroulant.
             </div>
-            <div class="matching-container">
-                <div class="matching-column">
-                    <h4>Exemples</h4>
-                    <div class="matching-item" data-type="example" data-id="tesla">Tesla et son écosystème voiture électrique + superchargeurs</div>
-                    <div class="matching-item" data-type="example" data-id="iphone">Nouvelle version d'iPhone avec meilleur appareil photo</div>
-                    <div class="matching-item" data-type="example" data-id="minecraft">Utilisation de Minecraft à des fins éducatives</div>
-                    <div class="matching-item" data-type="example" data-id="moocs">Les premiers MOOCs</div>
+            <div class="dropdown-matching">
+                <div class="matching-pair">
+                    <div class="example-text">Tesla et son écosystème voiture électrique + superchargeurs</div>
+                    <select class="type-select" data-example="tesla">
+                        <option value="">Sélectionner un type...</option>
+                        <option value="incrementale">Innovation incrémentale</option>
+                        <option value="radicale">Innovation radicale</option>
+                        <option value="rupture">Innovation de rupture</option>
+                        <option value="architecturale">Innovation architecturale/adjacente</option>
+                    </select>
                 </div>
-                <div class="matching-column">
-                    <h4>Types d'innovation</h4>
-                    <div class="matching-item" data-type="type" data-id="incrementale">Innovation incrémentale</div>
-                    <div class="matching-item" data-type="type" data-id="radicale">Innovation radicale</div>
-                    <div class="matching-item" data-type="type" data-id="rupture">Innovation de rupture</div>
-                    <div class="matching-item" data-type="type" data-id="architecturale">Innovation architecturale/adjacente</div>
+                <div class="matching-pair">
+                    <div class="example-text">Nouvelle version d'iPhone avec meilleur appareil photo</div>
+                    <select class="type-select" data-example="iphone">
+                        <option value="">Sélectionner un type...</option>
+                        <option value="incrementale">Innovation incrémentale</option>
+                        <option value="radicale">Innovation radicale</option>
+                        <option value="rupture">Innovation de rupture</option>
+                        <option value="architecturale">Innovation architecturale/adjacente</option>
+                    </select>
+                </div>
+                <div class="matching-pair">
+                    <div class="example-text">Utilisation de Minecraft à des fins éducatives</div>
+                    <select class="type-select" data-example="minecraft">
+                        <option value="">Sélectionner un type...</option>
+                        <option value="incrementale">Innovation incrémentale</option>
+                        <option value="radicale">Innovation radicale</option>
+                        <option value="rupture">Innovation de rupture</option>
+                        <option value="architecturale">Innovation architecturale/adjacente</option>
+                    </select>
+                </div>
+                <div class="matching-pair">
+                    <div class="example-text">Les premiers MOOCs</div>
+                    <select class="type-select" data-example="moocs">
+                        <option value="">Sélectionner un type...</option>
+                        <option value="incrementale">Innovation incrémentale</option>
+                        <option value="radicale">Innovation radicale</option>
+                        <option value="rupture">Innovation de rupture</option>
+                        <option value="architecturale">Innovation architecturale/adjacente</option>
+                    </select>
                 </div>
             </div>
             <div class="feedback">
@@ -523,8 +547,6 @@
         let currentQuestion = 1;
         let totalQuestions = 5;
         let answers = {};
-        let matchingSelections = { example: null, type: null };
-        let matchingPairs = {};
 
         // Correct answers and feedback
         const correctAnswers = {
@@ -654,24 +676,39 @@
                     (justification ? `<br><br><strong>Votre justification :</strong> "${justification}"` : '');
                 
             } else if (currentQuestion === 3) {
-                if (Object.keys(matchingPairs).length < 4) {
+                // Get all dropdown selections
+                const selects = document.querySelectorAll('.type-select');
+                let allAnswered = true;
+                let dropdownAnswers = {};
+                
+                selects.forEach(select => {
+                    const example = select.dataset.example;
+                    const selectedType = select.value;
+                    
+                    if (!selectedType) {
+                        allAnswered = false;
+                    } else {
+                        dropdownAnswers[example] = selectedType;
+                    }
+                });
+                
+                if (!allAnswered) {
                     alert('Veuillez associer tous les exemples à leur type d\'innovation');
                     return;
                 }
                 
-                answers[3] = matchingPairs;
+                answers[3] = dropdownAnswers;
                 
                 let correctCount = 0;
                 // Check matches and provide visual feedback
-                Object.entries(matchingPairs).forEach(([example, type]) => {
-                    const isCorrect = correctAnswers[3][example] === type;
+                selects.forEach(select => {
+                    const example = select.dataset.example;
+                    const selectedType = select.value;
+                    const matchingPair = select.closest('.matching-pair');
+                    const isCorrect = correctAnswers[3][example] === selectedType;
+                    
                     if (isCorrect) correctCount++;
-                    
-                    const exampleEl = document.querySelector(`[data-id="${example}"]`);
-                    const typeEl = document.querySelector(`[data-id="${type}"]`);
-                    
-                    exampleEl.classList.add(isCorrect ? 'correct-match' : 'incorrect-match');
-                    typeEl.classList.add(isCorrect ? 'correct-match' : 'incorrect-match');
+                    matchingPair.classList.add(isCorrect ? 'correct' : 'incorrect');
                 });
                 
                 feedback.className = `feedback show ${correctCount === 4 ? 'correct' : correctCount > 1 ? 'partial' : 'incorrect'}`;
@@ -778,8 +815,6 @@
         function restartQuiz() {
             currentQuestion = 1;
             answers = {};
-            matchingSelections = { example: null, type: null };
-            matchingPairs = {};
             
             // Reset all inputs and selections
             document.querySelectorAll('input').forEach(input => {
@@ -790,8 +825,12 @@
                 textarea.value = '';
             });
             
-            document.querySelectorAll('.option, .matching-item, .true-false-option').forEach(el => {
-                el.classList.remove('selected', 'correct', 'incorrect', 'correct-match', 'incorrect-match');
+            document.querySelectorAll('.type-select').forEach(select => {
+                select.value = '';
+            });
+            
+            document.querySelectorAll('.option, .matching-pair, .true-false-option').forEach(el => {
+                el.classList.remove('selected', 'correct', 'incorrect');
             });
             
             document.querySelectorAll('.feedback').forEach(feedback => {
@@ -824,44 +863,6 @@
                         opt.classList.remove('selected');
                     });
                     this.classList.add('selected');
-                });
-            });
-            
-            // Question 3 - Matching
-            document.querySelectorAll('[data-question="3"] .matching-item').forEach(item => {
-                item.addEventListener('click', function() {
-                    const type = this.dataset.type;
-                    const id = this.dataset.id;
-                    
-                    if (type === 'example') {
-                        // Clear previous selection
-                        document.querySelectorAll('[data-type="example"]').forEach(ex => {
-                            ex.classList.remove('selected');
-                        });
-                        this.classList.add('selected');
-                        matchingSelections.example = id;
-                    } else {
-                        // Clear previous selection
-                        document.querySelectorAll('[data-type="type"]').forEach(tp => {
-                            tp.classList.remove('selected');
-                        });
-                        this.classList.add('selected');
-                        matchingSelections.type = id;
-                    }
-                    
-                    // If both are selected, create the match
-                    if (matchingSelections.example && matchingSelections.type) {
-                        matchingPairs[matchingSelections.example] = matchingSelections.type;
-                        
-                        // Clear selections for next match
-                        document.querySelectorAll('.matching-item.selected').forEach(item => {
-                            item.classList.remove('selected');
-                        });
-                        matchingSelections = { example: null, type: null };
-                        
-                        // Show match count
-                        console.log(`Associations créées: ${Object.keys(matchingPairs).length}/4`);
-                    }
                 });
             });
             
